@@ -1,0 +1,80 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Password for user postgres:
+
+psql (17.5)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# show Databases
+postgres-# show DATABASES
+postgres-#
+postgres-# \D
+invalid command \D
+Try \? for help.
+postgres-# \l
+                                                                 List of databases
+        Name        |  Owner   | Encoding | Locale Provider |      Collate       |       Ctype        | Locale | ICU Rules |   Access privileges
+--------------------+----------+----------+-----------------+--------------------+--------------------+--------+-----------+-----------------------
+ E-commerce_db      | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+ black_friday_sales | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+ postgres           | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+ store_db           | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+ task_manager_db    | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+ template0          | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           | =c/postgres          +
+                    |          |          |                 |                    |                    |        |           | postgres=CTc/postgres
+ template1          | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           | =c/postgres          +
+                    |          |          |                 |                    |                    |        |           | postgres=CTc/postgres
+ test_db            | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+(8 rows)
+
+
+postgres-# store_db;
+ERROR:  syntax error at or near "show"
+LINE 2: show DATABASES
+        ^
+postgres=# show store_db;
+ERROR:  unrecognized configuration parameter "store_db"
+postgres=# \c store_db;
+You are now connected to database "store_db" as user "postgres".
+store_db=# COPY products(id, cost, category, name, brand, retail_price, department, sku, distribution_center_id)
+store_db-# FROM '/full/path/to/products.csv'
+store_db-# DELIMITER ',' CSV HEADER;
+ERROR:  could not open file "/full/path/to/products.csv" for reading: No such file or directory
+HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+store_db=# \copy products(id, cost, category, name, brand, retail_price, department, sku, distribution_center_id)
+\copy: parse error at end of line
+store_db=# FROM 'C:/Users/YourName/Downloads/products.csv' DELIMITER ',' CSV HEADER;
+ERROR:  syntax error at or near "FROM"
+LINE 1: FROM 'C:/Users/YourName/Downloads/products.csv' DELIMITER ',...
+        ^
+store_db=# \copy products(id, cost, category, name, brand, retail_price, department, sku, distribution_center_id) FROM 'C:\Users\ramir\Downloads/products.csv' DELIMITER ',' CSV HEADER;
+COPY 29120
+store_db=# \c store_db;
+You are now connected to database "store_db" as user "postgres".
+store_db=# SELECT COUNT(*) FROM products;
+ count
+-------
+ 29120
+(1 row)
+
+
+store_db=# SELECT COUNT(*) FROM products;
+ count
+-------
+ 29120
+(1 row)
+
+
+store_db=# SELECT COUNT(*) FROM products;
+ count
+-------
+ 29120
+(1 row)
+
+
+store_db=#
