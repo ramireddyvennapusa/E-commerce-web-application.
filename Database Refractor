@@ -1,0 +1,173 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Password for user postgres:
+
+psql (17.5)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# show Databases
+postgres-# show DATABASES
+postgres-#
+postgres-# \D
+invalid command \D
+Try \? for help.
+postgres-# \l
+                                                                 List of databases
+        Name        |  Owner   | Encoding | Locale Provider |      Collate       |       Ctype        | Locale | ICU Rules |   Access privileges
+--------------------+----------+----------+-----------------+--------------------+--------------------+--------+-----------+-----------------------
+ E-commerce_db      | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+ black_friday_sales | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+ postgres           | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+ store_db           | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+ task_manager_db    | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+ template0          | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           | =c/postgres          +
+                    |          |          |                 |                    |                    |        |           | postgres=CTc/postgres
+ template1          | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           | =c/postgres          +
+                    |          |          |                 |                    |                    |        |           | postgres=CTc/postgres
+ test_db            | postgres | UTF8     | libc            | English_India.1252 | English_India.1252 |        |           |
+(8 rows)
+
+
+postgres-# store_db;
+ERROR:  syntax error at or near "show"
+LINE 2: show DATABASES
+        ^
+postgres=# show store_db;
+ERROR:  unrecognized configuration parameter "store_db"
+postgres=# \c store_db;
+You are now connected to database "store_db" as user "postgres".
+store_db=# COPY products(id, cost, category, name, brand, retail_price, department, sku, distribution_center_id)
+store_db-# FROM '/full/path/to/products.csv'
+store_db-# DELIMITER ',' CSV HEADER;
+ERROR:  could not open file "/full/path/to/products.csv" for reading: No such file or directory
+HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+store_db=# \copy products(id, cost, category, name, brand, retail_price, department, sku, distribution_center_id)
+\copy: parse error at end of line
+store_db=# FROM 'C:/Users/YourName/Downloads/products.csv' DELIMITER ',' CSV HEADER;
+ERROR:  syntax error at or near "FROM"
+LINE 1: FROM 'C:/Users/YourName/Downloads/products.csv' DELIMITER ',...
+        ^
+store_db=# \copy products(id, cost, category, name, brand, retail_price, department, sku, distribution_center_id) FROM 'C:\Users\ramir\Downloads/products.csv' DELIMITER ',' CSV HEADER;
+COPY 29120
+store_db=# \c store_db;
+You are now connected to database "store_db" as user "postgres".
+store_db=# SELECT COUNT(*) FROM products;
+ count
+-------
+ 29120
+(1 row)
+
+
+store_db=# SELECT COUNT(*) FROM products;
+ count
+-------
+ 29120
+(1 row)
+
+
+store_db=# SELECT COUNT(*) FROM products;
+ count
+-------
+ 29120
+(1 row)
+
+
+store_db=# CREATE TABLE departments (
+store_db(#     id SERIAL PRIMARY KEY,
+store_db(#     name VARCHAR(100) UNIQUE NOT NULL
+store_db(# );
+CREATE TABLE
+store_db=# INSERT INTO departments (name)
+store_db-# SELECT DISTINCT department
+store_db-# FROM products
+store_db-# WHERE department IS NOT NULL;
+INSERT 0 2
+store_db=# ALTER TABLE products
+store_db-# ADD COLUMN department_id INT;
+ALTER TABLE
+store_db=# UPDATE products
+store_db-# SET department_id = d.id
+store_db-# FROM departments d
+store_db-# WHERE products.department = d.name;
+UPDATE 29120
+store_db=# ALTER TABLE products
+store_db-# DROP COLUMN department;
+ALTER TABLE
+store_db=#
+store_db=# ALTER TABLE products
+store_db-# ADD CONSTRAINT fk_department
+store_db-# FOREIGN KEY (department_id)
+store_db-# REFERENCES departments(id)
+store_db-# ON DELETE SET NULL;
+ALTER TABLE
+store_db=# ALTER TABLE products
+store_db-# DROP COLUMN department;
+ERROR:  column "department" of relation "products" does not exist
+store_db=#
+store_db=# ALTER TABLE products
+store_db-# ADD CONSTRAINT fk_department
+store_db-# FOREIGN KEY (department_id)
+store_db-# REFERENCES departments(id)
+store_db-# ON DELETE SET NULL;
+ERROR:  constraint "fk_department" for relation "products" already exists
+store_db=# CREATE TABLE departments (
+store_db(#     id SERIAL PRIMARY KEY,
+store_db(#     name VARCHAR(100) UNIQUE NOT NULL
+store_db(# );
+ERROR:  relation "departments" already exists
+store_db=# INSERT INTO departments (name)
+store_db-# SELECT DISTINCT category
+store_db-# FROM products
+store_db-# WHERE category IS NOT NULL;
+INSERT 0 26
+store_db=# ALTER TABLE products
+store_db-# ADD COLUMN department_id INT;
+ERROR:  column "department_id" of relation "products" already exists
+store_db=# UPDATE products
+store_db-# SET department_id = d.id
+store_db-# FROM departments d
+store_db-# WHERE products.category = d.name;
+UPDATE 29120
+store_db=# ALTER TABLE products
+store_db-# DROP COLUMN category;
+ALTER TABLE
+store_db=# ALTER TABLE products
+store_db-# ADD CONSTRAINT fk_department
+store_db-# FOREIGN KEY (department_id)
+store_db-# REFERENCES departments(id)
+store_db-# ON DELETE SET NULL;
+ERROR:  constraint "fk_department" for relation "products" already exists
+store_db=# SELECT p.id, p.name, d.name AS department
+store_db-# FROM products p
+store_db-# LEFT JOIN departments d ON p.department_id = d.id
+store_db-# LIMIT 5;
+  id   |                       name                       | department
+-------+--------------------------------------------------+------------
+ 13122 | 2XU Women's Swimmers Compression Long Sleeve Top | Swim
+ 18147 | 2XU Non-Stirrup Compression Calf Guard           | Active
+ 18363 | 2XU Men's Compression Recovery Tights            | Active
+ 18394 | 2XU Men's Compression Race Sock                  | Active
+ 18465 | 2XU Men's Elite Compression Performance Sock     | Active
+(5 rows)
+
+
+store_db=# SELECT p.id, p.name, d.name AS department_name
+store_db-# FROM products p
+store_db-# JOIN departments d ON p.department_id = d.id
+store_db-# LIMIT 10;
+  id   |                       name                       | department_name -------+--------------------------------------------------+----------------- 13122 | 2XU Women's Swimmers Compression Long Sleeve Top | Swim
+ 18147 | 2XU Non-Stirrup Compression Calf Guard           | Active
+ 18363 | 2XU Men's Compression Recovery Tights            | Active
+ 18394 | 2XU Men's Compression Race Sock                  | Active
+ 18465 | 2XU Men's Elite Compression Performance Sock     | Active
+ 18593 | 2XU Men's Compression Recovery Sock              | Active
+ 18607 | 2XU Men's Compression 3/4 Tights                 | Active
+ 18644 | 2XU Men's Elite Compression Long Sleeve Top      | Active
+ 18664 | 2XU Recovery Compression Leg Sleeves             | Active
+ 18708 | 2XU Men's Thermal Compression Long Sleeve Top    | Active
+(10 rows)
